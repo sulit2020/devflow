@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import Navbar from "@/components/navigation/navbar";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -38,7 +39,10 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>{children}</ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <Navbar/>
+          {children}
+          </ThemeProvider>
       </body>
     </html>
   );
