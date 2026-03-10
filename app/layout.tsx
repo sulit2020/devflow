@@ -4,7 +4,10 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-import Navbar from "@/components/navigation/navbar";
+import { Toaster } from "@/components/ui/sonner";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
+import { ReactNode } from "react";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -29,21 +32,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+const RootLayout= async ({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {children:ReactNode})=> {
+  const session = await auth();
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+      <SessionProvider session={session}>
       <body
         className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <Navbar/>
           {children}
           </ThemeProvider>
+          <Toaster/>
       </body>
+      </SessionProvider>
     </html>
   );
 }
+
+export default RootLayout
