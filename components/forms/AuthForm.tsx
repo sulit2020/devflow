@@ -1,12 +1,7 @@
 "use client";
-
-import * as React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { z, ZodType } from "zod";
+import  { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Field,
   FieldError,
@@ -17,22 +12,17 @@ import {
   DefaultValues,
   FieldValues,
   Path,
-  SubmitHandler,
   useForm,
   Controller,
 } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroupTextarea,
-} from "@/components/ui/input-group";
-import { SignInSchema } from "@/lib/validation";
+import Link from "next/link";
+import ROUTES from "@/constants/route";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 
 interface AuthFormProps<T extends FieldValues> {
-  schema: ZodType<T>;
-  defaultValues: T;
+  schema: z.ZodSchema<T>;
+  defaultValues: DefaultValues<T>;
   onSubmit: (data: T) => Promise<{ success: boolean }>;
   formType: "SIGN_IN" | "SIGN_UP";
 }
@@ -43,19 +33,24 @@ const AuthForm = <T extends FieldValues>({
   formType,
   onSubmit,
 }: AuthFormProps<T>) => {
-  const form = useForm<z.infer<typeof SignInSchema>>({
-    resolver: zodResolver(SignInSchema),
+  const form = useForm<T>({
+    resolver: standardSchemaResolver(schema),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
-  const handleSubmit: SubmitHandler<T> = async () => {};
+  const handleSubmit = async (data: T) => {
+    const result = await onSubmit(data);
+    if (result.success) {
+      // Handle success (e.g., redirect)
+    }
+  };
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
 
   return (
-    <form id="form-rhf-demo" onSubmit={form.handleSubmit(handleSubmit)}>
+    <form id="form-rhf-demo" onSubmit={form.handleSubmit(handleSubmit)} >
       <FieldGroup>
-        {Object.keys(defaultValues).map((field) => (
+        {(Object.keys(defaultValues) as Array<Path<T>>).map((field) => (
           <Controller
             key={field}
             name={field as Path<T>}
@@ -81,6 +76,38 @@ const AuthForm = <T extends FieldValues>({
           />
         ))}
       </FieldGroup>
+      <Button
+          disabled={form.formState.isSubmitting}
+          className="primary-gradient paragraph-medium min-h-12 w-full rounded-2 px-4 py-3 font-inter !text-light-900"
+        >
+          {form.formState.isSubmitting
+            ? buttonText === "Sign In"
+              ? "Signin In..."
+              : "Signing Up..."
+            : buttonText}
+        </Button>
+
+        {formType === "SIGN_IN" ? (
+          <p>
+            Don&apos;t have an account?{" "}
+            <Link
+              href={ROUTES.SIGN_UP}
+              className="paragraph-semibold primary-text-gradient"
+            >
+              Sign up
+            </Link>
+          </p>
+        ) : (
+          <p>
+            Already have an account?{" "}
+            <Link
+              href={ROUTES.SIGN_IN}
+              className="paragraph-semibold primary-text-gradient"
+            >
+              Sign in
+            </Link>
+          </p>
+        )}
     </form>
   );
 };
