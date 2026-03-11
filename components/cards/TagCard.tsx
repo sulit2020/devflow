@@ -1,8 +1,7 @@
 import ROUTES from "@/constants/route";
 import { getDeviconClassName } from "@/lib/utils";
-import { Badge } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import { Badge } from "../ui/badge";
 interface Props {
   _id: string;
   name: string;

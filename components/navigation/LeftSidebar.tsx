@@ -1,8 +1,8 @@
 import NavLinks from "./navbar/NavLinks";
 import ROUTES from "@/constants/route";
-import { Link } from "lucide-react";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 const LeftSidebar = () => {
   return (
