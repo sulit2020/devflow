@@ -2,20 +2,19 @@ interface Tag {
   _id: string;
   name: string;
 }
-
 interface Author {
   _id: string;
   name: string;
   image: string;
 }
 
-interface Question {
+ interface Question {
   _id: string;
   title: string;
   tags: Tag[];
-  author: Author[];
+  author: Author;
   createdAt: Date;
-  upvotes:number;
+  upvotes: number;
   answers: number;
   views: number;
 }
