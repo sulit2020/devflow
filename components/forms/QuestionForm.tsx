@@ -11,8 +11,16 @@ import {
 } from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useRef } from "react";
+import { MDXEditorMethods } from "@mdxeditor/editor";
+import dynamic from "next/dynamic";
 
 const QuestionForm = () => {
+  const Editor = dynamic(() => import("@/components/editor"), {
+    // Make sure we turn SSR off
+    ssr: false,
+  });
+  const editorRef = useRef<MDXEditorMethods>(null);
   const form = useForm({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -56,7 +64,13 @@ const QuestionForm = () => {
                 Detailed explanation of your problem {""}{" "}
                 <span className="text-primary-500">*</span>
               </FieldLabel>
-              <FieldContent>Editor</FieldContent>
+              <FieldContent>
+                <Editor
+                  value={field.value}
+                  editorRef={editorRef}
+                  fieldChange={field.onChange}
+                />
+              </FieldContent>
               <FieldDescription className="body-regular text-light-500 mt-2.5">
                 Introduce the problem and expand on what you&apos;ve put in the
                 title.
@@ -79,15 +93,19 @@ const QuestionForm = () => {
               />
               Tags
               <FieldDescription className="body-regular text-light-500 mt-2.5">
-                Add up to 3 tags to describe what your question is about. You need to press enter to add a tag.
+                Add up to 3 tags to describe what your question is about. You
+                need to press enter to add a tag.
               </FieldDescription>
             </Field>
           )}
         />
         <div className="mt-16 flex justify-end">
-            <Button type="submit" className="primary-gradient w-fit !text-light-900">
-                Ask A Question
-            </Button>
+          <Button
+            type="submit"
+            className="primary-gradient w-fit !text-light-900"
+          >
+            Ask A Question
+          </Button>
         </div>
       </form>
     </FieldGroup>
